@@ -113,41 +113,48 @@ static PF_FORWARD_ACTION filter_cb(unsigned char *header, unsigned char *packet,
 		}
 	}
 
-	if(!http) {
-		KIRQL irq;
-
-		KeAcquireSpinLock(&g_internal->rangeslock, &irq);
-
-		//TODO: test allowed ranges.
-		if(g_internal->allowedcount) {
-			range = inranges(g_internal->allowedranges, g_internal->allowedcount, src);
-			if(!range) range = inranges(g_internal->allowedranges, g_internal->allowedcount, dest);
-
-			if(range) {
-				pbn.label = range->label;
-				pbn.labelsid = g_internal->allowedlabelsid;
-				pbn.action = 1;
-			}
-		}
-
-		if(!range && g_internal->blockedcount) {
-			range=inranges(g_internal->blockedranges, g_internal->blockedcount, src);
-			if(!range) range=inranges(g_internal->blockedranges, g_internal->blockedcount, dest);
-
-			if(range) {
-				pbn.label = range->label;
-				pbn.labelsid = g_internal->blockedlabelsid;
-				pbn.action = 0;
-			}
-		}
-
-		KeReleaseSpinLock(&g_internal->rangeslock, irq);
-	}
-
-	if(!range) {
+	if (!LocalBoundIp4Matched(src) && !LocalBoundIp4Matched(dest)) {
+	
 		pbn.action = 2;
-	}
 
+	} else {
+	
+		if (!http) {
+			KIRQL irq;
+
+			KeAcquireSpinLock(&g_internal->rangeslock, &irq);
+
+			//TODO: test allowed ranges.
+			if (g_internal->allowedcount) {
+				range = inranges(g_internal->allowedranges, g_internal->allowedcount, src);
+				if (!range) range = inranges(g_internal->allowedranges, g_internal->allowedcount, dest);
+
+				if (range) {
+					pbn.label = range->label;
+					pbn.labelsid = g_internal->allowedlabelsid;
+					pbn.action = 1;
+				}
+			}
+
+			if (!range && g_internal->blockedcount) {
+				range = inranges(g_internal->blockedranges, g_internal->blockedcount, src);
+				if (!range) range = inranges(g_internal->blockedranges, g_internal->blockedcount, dest);
+
+				if (range) {
+					pbn.label = range->label;
+					pbn.labelsid = g_internal->blockedlabelsid;
+					pbn.action = 0;
+				}
+			}
+
+			KeReleaseSpinLock(&g_internal->rangeslock, irq);
+		}
+
+		if (!range) {
+			pbn.action = 2;
+		}
+	}
+	
 	if(range || opening) {
 		pbn.protocol=iph->ipProtocol;
 
@@ -252,6 +259,18 @@ static NTSTATUS drv_control(PDEVICE_OBJECT device, PIRP irp)
 
 	case IOCTL_PEERBLOCK_GETNOTIFICATION:
 		return Notification_Recieve(&g_internal->queue, irp);
+
+
+	case IOCTL_PEERBLOCK_SETLOCALBOUNDIP4:
+	{
+		ULONG ip;
+
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETLOCALBOUNDIP4\n");
+		ip = *(ULONG*) irp->AssociatedIrp.SystemBuffer;
+
+		SetLocalBoundIpv4(ip);
+	}
+	break;
 
 	case IOCTL_PEERBLOCK_SETDESTINATIONPORTS:
 	{

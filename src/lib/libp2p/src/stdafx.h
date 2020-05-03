@@ -23,7 +23,7 @@
 #ifndef __STDAFX_H__
 #define __STDAFX_H__
 
-#include <hash_map>
+#include <unordered_map>
 #include <list>
 #include <vector>
 #include <string>

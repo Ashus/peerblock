@@ -94,7 +94,7 @@ static void FillAddrs(PBNOTIFICATION *pbn, ULONG srcAddr, const IN6_ADDR *srcAdd
 static ULONG RealClassifyV4Connect(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if(protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+	if(!LocalBoundIp4Matched(localAddr) || (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort)))) {
 		pbn.action = 2;
 	}
 	else {
@@ -143,7 +143,7 @@ static NTSTATUS ClassifyV4Connect(const FWPS_INCOMING_VALUES0* inFixedValues, co
 static ULONG RealClassifyV4Accept(ULONG protocol, ULONG localAddr, const IN6_ADDR *localAddr6, USHORT localPort, ULONG remoteAddr, const IN6_ADDR *remoteAddr6, USHORT remotePort) {
 	PBNOTIFICATION pbn = {0};
 
-	if (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort))) {
+	if (!LocalBoundIp4Matched(localAddr) || (protocol == IPPROTO_TCP && (DestinationPortAllowed(remotePort) || SourcePortAllowed(localPort)))) {
 		pbn.action = 2;
 	}
 	else {
@@ -468,6 +468,17 @@ static NTSTATUS Driver_OnDeviceControl(PDEVICE_OBJECT device, PIRP irp)
 
 	case IOCTL_PEERBLOCK_GETNOTIFICATION:
 		return Notification_Recieve(&g_internal->queue, irp);
+	
+	case IOCTL_PEERBLOCK_SETLOCALBOUNDIP4:
+	{
+		ULONG ip;
+
+		DbgPrintEx(DPFLTR_IHVNETWORK_ID, DPFLTR_TRACE_LEVEL, "pbfilter:  > IOCTL_PEERBLOCK_SETLOCALBOUNDIP4\n");
+		ip = *(ULONG*) irp->AssociatedIrp.SystemBuffer;
+
+		SetLocalBoundIpv4(ip);
+	}
+	break;
 
 	case IOCTL_PEERBLOCK_SETDESTINATIONPORTS:
 	{

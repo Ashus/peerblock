@@ -459,6 +459,18 @@ static void FitTabChild(HWND tabs, HWND child) {
 	MoveWindow(child, rc.left, rc.top, rc.right-rc.left, rc.bottom-rc.top, TRUE);
 }
 
+static unsigned int make_ipv4(string ip) {
+	unsigned int a, b, c, d;
+
+	if (sscanf(ip.c_str(), "%u.%u.%u.%u",
+		&a, &b, &c, &d) != 4 ||
+		a > 255 || b > 255 || c > 255 || d > 255) {
+		return 0;
+	}
+
+	return ((a << 24) | (b << 16) | (c << 8) | d);
+}
+
 static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy);
 static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
@@ -552,6 +564,12 @@ static BOOL Main_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	g_config.PortSet.Merge();
 	g_filter->setdestinationports(g_config.PortSet.DestinationPorts);
 	g_filter->setsourceports(g_config.PortSet.SourcePorts);
+	
+	
+	ULONG local_bound_ipv4 = make_ipv4(g_config.LocalBoundIpv4);
+		//make_ip(10, 152, 66, 22);
+	//ULONG local_bound_ipv4 = make_ip(192, 168, 146, 129);
+	g_filter->setlocalboundipv4(local_bound_ipv4);
 
 	TRACEI("[mainproc] [Main_OnInitDialog]    getting tabs");
 	HWND tabs=GetDlgItem(hwnd, IDC_TABS);

@@ -132,7 +132,7 @@ void pbfilter_base::setblock(bool block)
 
 void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 {
-	typedef stdext::hash_map<std::wstring, const wchar_t*> hmap_type;
+	typedef std::unordered_map<std::wstring, const wchar_t*> hmap_type;
 
 	TRACEV("[pbfilter_base] [setranges]  > Entering routine.");
 
@@ -214,7 +214,18 @@ void pbfilter_base::setranges(const p2p::list &ranges, bool block)
 
 } // End of setranges()
 
+void pbfilter_base::setlocalboundipv4(ULONG ip)
+{
+	ULONG *nip = (ULONG*)malloc(sizeof(ULONG));
+	nip = &ip;
+	DWORD ret = m_filter.write(IOCTL_PEERBLOCK_SETLOCALBOUNDIP4, nip, (DWORD)(sizeof(ULONG)));
 
+	if (ret != ERROR_SUCCESS)
+	{
+		TRACEERR("[pbfilter_base] [setlocalboundipv4]", L"Problems talking to driver", ret);
+		throw win32_error("DeviceIoControl", ret);
+	}
+}
 
 void pbfilter_base::setdestinationports(const std::set<USHORT> &ports)
 {

@@ -110,6 +110,8 @@ typedef struct __pb_internal {
 	KSPIN_LOCK destinationportslock;
 	KSPIN_LOCK sourceportslock;
 
+	ULONG localboundipv4;
+
 	USHORT *destinationports;
 	USHORT destinationportcount;
 	USHORT *sourceports;
@@ -127,7 +129,9 @@ extern PBINTERNAL *g_internal;
 
 const PBIPRANGE* inranges(const PBIPRANGE *ranges, int count, ULONG ip);
 void SetRanges(const PBRANGES *ranges, int block);
+void SetLocalBoundIpv4(const ULONG ip);
 void SetDestinationPorts(const USHORT *ports, USHORT count);
 void SetSourcePorts(const USHORT *ports, USHORT count);
 int DestinationPortAllowed(USHORT port);
 int SourcePortAllowed(USHORT port);
+int LocalBoundIp4Matched(ULONG ip);

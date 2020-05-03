@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 using namespace std;
+#include <unordered_map>
+
 
 namespace p2p {
 
@@ -180,7 +182,7 @@ void list::_load_p2b(istream &stream) {
 void list::_save_p2b(ostream &stream) const {
 	stream.write("\xFF\xFF\xFF\xFFP2B\x03", 8);
 
-	stdext::hash_map<wstring,unsigned int> names;
+	std::unordered_map<wstring,unsigned int> names;
 	unsigned int i=0;
 
 	{

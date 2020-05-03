@@ -123,6 +123,16 @@ void SetRanges(const PBRANGES *ranges, int block)
 	DbgPrint("pbfilter:  < SetRanges\n");
 }
 
+void SetLocalBoundIpv4(const ULONG ip) {
+	g_internal->localboundipv4 = ip;
+
+	if (ip) {
+		DbgPrint("pbfilter:  SetLocalBoundIpv4 - bound\n");
+	} else {
+		DbgPrint("pbfilter:  SetLocalBoundIpv4 - unbound\n");
+	}
+}
+
 void SetDestinationPorts(const USHORT *ports, USHORT count)
 {
 	USHORT *oldports = NULL;
@@ -197,9 +207,13 @@ int __cdecl CompareUShort(const void * a, const void * b)
 }
 
 int SourcePortAllowed(USHORT port) {
-	return (int) bsearch(&port, g_internal->sourceports, g_internal->sourceportcount, sizeof(USHORT), CompareUShort);
+	return (int) (intptr_t) bsearch(&port, g_internal->sourceports, g_internal->sourceportcount, sizeof(USHORT), CompareUShort);
 }
 
 int DestinationPortAllowed(USHORT port) {
-	return (int) bsearch(&port, g_internal->destinationports, g_internal->destinationportcount, sizeof(USHORT), CompareUShort);
+	return (int) (intptr_t) bsearch(&port, g_internal->destinationports, g_internal->destinationportcount, sizeof(USHORT), CompareUShort);
+}
+
+int LocalBoundIp4Matched(ULONG ip) {
+	return ((!g_internal->localboundipv4) || g_internal->localboundipv4 == ip) ? 1 : 0;
 }

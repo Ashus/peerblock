@@ -31,7 +31,7 @@ using namespace std;
 
 
 // Lets us refer to a list by ID, covering all known URL permutations
-typedef enum LISTNAME
+enum LISTNAME
 {
 	LISTNAME_BT_LEVEL1,
 	LISTNAME_BT_ADS,
@@ -126,7 +126,7 @@ typedef enum LISTNAME
 
 
 // Defines the order in which fields are present in the appropriate row of the url list
-typedef enum LISTS_FIELD
+enum LISTS_FIELD
 {
 	LISTS_FIELD_DESC,		// Default description of the list
 	LISTS_FIELD_BESTURL		// The "Friendly" format iBlocklist URL, for most lists
@@ -134,7 +134,7 @@ typedef enum LISTS_FIELD
 
 
 // Flags used for sanity-checking purposes
-typedef enum LISTFLAG
+enum LISTFLAG
 {
 	LISTFLAG_NOT_IBL,		// Not an iblocklist.com-hosted list
 	LISTFLAG_DEFAULT,		// One of the default lists

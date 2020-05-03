@@ -50,6 +50,7 @@ Configuration::Configuration()
 	, LogAllowed(true)
 	, LogBlocked(true)
 	, ShowAllowed(false)
+	, LocalBoundIpv4("0.0.0.0")
 	, CacheCrc(0)
 	, UpdateCountdown(10)
 	, RecentBlockWarntime(60)
@@ -555,6 +556,7 @@ bool Configuration::Load()
 
 		GetChild(settings, "ListSanityChecking", this->EnableListSanityChecking);
 		GetChild(settings, "WarningIconForHttpAllow", this->EnableWarningIconForHttpAllow);
+		GetChild(settings, "LocalBoundIpv4", this->LocalBoundIpv4);
 	}
 
 	TRACEI("[Configuration] [Load]    parsing config logging element");
@@ -889,6 +891,7 @@ void Configuration::Save(const TCHAR * _filename)
 		InsertChild(settings, "RecentBlockWarntime", (int)this->RecentBlockWarntime);
 		InsertChild(settings, "ListSanityChecking", this->EnableListSanityChecking);
 		InsertChild(settings, "WarningIconForHttpAllow", this->EnableWarningIconForHttpAllow);
+		InsertChild(settings, "LocalBoundIpv4", this->LocalBoundIpv4);
 	}
 
 	{

@@ -46,11 +46,13 @@ HINSTANCE hPeerBlockInstance = 0;
 ///   Simply gets/logs the OS Version, doesn't actually do anything permanent with it.
 /// </summary>
 //
+#pragma warning(disable : 4996)
+
 static bool CheckOS() {
 	OSVERSIONINFOEX osv = {0};
 	osv.dwOSVersionInfoSize = sizeof(osv);
 	if(!GetVersionEx((OSVERSIONINFO *)&osv)) return false;
-
+	
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 
@@ -58,7 +60,9 @@ static bool CheckOS() {
 
 	tstring strOsName;
 
-	if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 3 && osv.wProductType == VER_NT_WORKSTATION )
+	if (osv.dwMajorVersion == 10 && osv.dwMinorVersion == 0 && osv.wProductType == VER_NT_WORKSTATION)
+		strOsName = _T("Windows 10");
+	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 3 && osv.wProductType == VER_NT_WORKSTATION )
 		strOsName = _T("Windows 8.1");
 	else if ( osv.dwMajorVersion == 6 && osv.dwMinorVersion == 2 && osv.wProductType == VER_NT_WORKSTATION )
 		strOsName = _T("Windows 8");

@@ -204,6 +204,7 @@ struct Configuration {
 	tstring IblPin;         // I-Blocklist Subscription PIN
     bool IgnoreListUpdateLimit;     // true to ignore 429 errors during list-update checking
     tstring UniqueId;       // anonymous ID for this machine, so that other computers behind the same public-facing IP don't screw this user out of his weekly list-updates
+	string LocalBoundIpv4;
 
 	bool TracelogEnabled;
 	int TracelogLevel;

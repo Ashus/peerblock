@@ -77,7 +77,7 @@ public:
 
     ~fifo(void)
     {
-        assert(empty());
+        //assert(empty());
         dealloc_node(head_.get_ptr());
     }
 

@@ -54,7 +54,7 @@ public:
 	void setblock(bool block);
 
 	void setranges(const p2p::list &ranges, bool block);
-
+	void setlocalboundipv4(ULONG ip);
 	void setdestinationports(const std::set<USHORT> &ports);
 	void setsourceports(const std::set<USHORT> &ports);
 
