@@ -72,14 +72,14 @@ After you run the PeerBlock for the first time, close it and open `peerblock.con
 
 Use case of this feature is as follows:
 
-####Preconditions
+### Preconditions
 - you want to use uTorrent in background and protect yourself
 - you want to be able to use unlimited legal traffic with IP addresses in blocklists (for example Steam to download content or use Skype)
 
-####Requirements
+### Requirements
 - you have two ethernet connections to internet
 
-####Procedure
+### Procedure
 - configure one of the interfaces as default using lowering IPv4 stack metric. Most applications will use this as TCP/IP stack will have this as default gateway.
 - bind the other interface's IP to uTorrent - Settings - Advanced - net.bind_ip and net.outgoing_ip
 - close PeerBlock, bind the other interface's IP to PeerBlock, start PeerBlock again
